@@ -4,7 +4,7 @@ import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
-from keras.layers import Activation, Dropout, Flatten, Dense
+from keras.layers import Activation, Dropout, Flatten, Dense, BatchNormalization
 from keras import backend as K
 import numpy as np
 from keras.preprocessing import image
@@ -63,28 +63,44 @@ model = keras.Sequential()
 # Set image shape: input_shape=(32, 32, 3)
 model.add(Conv2D(32, kernel_size = (3, 3), input_shape=inputShape))
 model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size = (2, 2)))
+
+model.add(Dropout(0.3))
+
 
 model.add(Conv2D(32, kernel_size = (3, 3), input_shape=inputShape))
 model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size = (2, 2)))
 
-model.add(Conv2D(32, kernel_size = (3, 3), input_shape=inputShape))
+model.add(Dropout(0.5))
+
+model.add(Conv2D(64, kernel_size = (3, 3), input_shape=inputShape))
 model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size = (2, 2)))
 
-model.add(Conv2D(32, kernel_size = (3, 3), input_shape=inputShape))
+model.add(Dropout(0.4))
+
+model.add(Conv2D(64, kernel_size = (3, 3), input_shape=inputShape))
 model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size = (2, 2)))
+
+model.add(Dropout(0.3))
 
 model.add(Flatten())
-model.add(Dense(64))
+
+model.add(Dense(512))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+
+model.add(Dense(128))
+model.add(Activation('relu'))
+
+model.add(Dropout(0.4))
+
 model.add(Dense(3, activation='softmax'))
-
-model.add(Activation('sigmoid'))
-
 
 # Training
 
@@ -104,18 +120,10 @@ history = History()
 model.fit_generator(
     train_generator,
     steps_per_epoch = 821,
-    epochs = 30, callbacks = [history],
+    epochs = 25, callbacks = [history],
     validation_data = validation_generator,
     validation_steps = 656
 )
 
-
-
 model.summary()
 
-
-# Evaluating 
-
-#score = model.evaluate(x_test, y_test, verbose = 0)
-#print("Test loss:", score[0])
-#print("Test accuracy:", score[1])

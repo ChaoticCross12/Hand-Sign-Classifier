@@ -10,6 +10,8 @@ import numpy as np
 from keras.preprocessing import image
 from keras.callbacks import History
 
+import matplotlib.pyplot as plt
+
 
 # Model / data parameters
 
@@ -20,7 +22,6 @@ inputShape = (img_width, img_height, 3)
 
 train_data_dir = "../dataset/RockPaperScissors"
 validation_data_dir = "../dataset/RockPaperScissors"
-
 
 
 
@@ -120,9 +121,26 @@ history = History()
 model.fit_generator(
     train_generator,
     steps_per_epoch = 821,
-    epochs = 25, callbacks = [history],
+    epochs = 3, callbacks = [history],
     validation_data = validation_generator,
     validation_steps = 656
 )
 
+# Saving Model
+model.save_weights("model.h5")
+print("Saved model to disk")
+
+
+
+
 model.summary()
+
+print(history.history.keys())
+
+plt.plot(history.history['categorical_accuracy'])
+plt.plot(history.history['val_categorical_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
